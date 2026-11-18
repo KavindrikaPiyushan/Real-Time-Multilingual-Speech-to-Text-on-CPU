@@ -1,0 +1,17 @@
+﻿clip,chunk_ms,rep,audio_s,chunks,first_text_s,final_latency_s,inferences,model_s,rtf,metric,error_rate,transcript
+english.wav,500,1,11.1,23,3.03,7.06,5,15.17,1.37,WER,0.353,The release Q and three is a family that includes two powerful all-in-one speech recognition models that support language identification.
+mandarin.wav,500,1,15.74,32,3.19,3.88,7,16.58,1.05,CER,0.0,你叫什么名字？你来自哪里？你多大？你会说中文吗？你是做什么的？
+english.wav,1000,1,11.1,12,3.5,5.13,5,13.71,1.24,WER,0.353,"The release Q and three is a family that includes two powerful, all-in-one speech recognition models. That support language identification."
+mandarin.wav,1000,1,15.74,16,3.37,4.68,7,17.48,1.11,CER,0.0,你叫什么名字？你来自哪里？你多大？你会说中文吗？你是做什么的？
+english.wav,2000,1,11.1,6,2.98,6.11,5,14.18,1.28,WER,0.353,The release Q and three is a family that includes two powerful all-in-one speech recognition models that support language identification.
+mandarin.wav,2000,1,15.74,8,3.06,3.79,8,16.08,1.02,CER,0.0,你叫什么名字？你来自哪里？你多大？你会说中文吗？你是做什么的？
+english.wav,5000,1,11.1,3,7.27,3.86,3,7.18,0.65,WER,0.353,"The release Q and three is a family that includes two powerful, all-in-one speech recognition models. That support language identification."
+mandarin.wav,5000,1,15.74,4,6.9,3.53,4,8.96,0.57,CER,0.0,你叫什么名字？你来自哪里？你多大？你会说中文吗？你是做什么的？
+english.wav,500,2,11.1,23,2.91,5.66,5,13.58,1.22,WER,0.353,The release Q and three is a family that includes two powerful all-in-one speech recognition models that support language identification.
+mandarin.wav,500,2,15.74,32,3.15,4.05,8,16.41,1.04,CER,0.0,你叫什么名字？你来自哪里？你多大？你会说中文吗？你是做什么的？
+english.wav,1000,2,11.1,12,2.96,6.76,5,14.82,1.34,WER,0.353,The release Q and three is a family that includes two powerful all-in-one speech recognition models that support language identification.
+mandarin.wav,1000,2,15.74,16,3.04,4.04,8,16.28,1.03,CER,0.0,你叫什么名字？你来自哪里？你多大？你会说中文吗？你是做什么的？
+english.wav,2000,2,11.1,6,2.94,5.78,5,13.68,1.23,WER,0.353,The release Q and three is a family that includes two powerful all-in-one speech recognition models that support language identification.
+mandarin.wav,2000,2,15.74,8,3.02,3.52,8,15.7,1.0,CER,0.0,你叫什么名字？你来自哪里？你多大？你会说中文吗？你是做什么的？
+english.wav,5000,2,11.1,3,7.45,4.15,3,7.67,0.69,WER,0.353,"The release Q and three is a family that includes two powerful, all-in-one speech recognition models. That support language identification."
+mandarin.wav,5000,2,15.74,4,6.89,3.45,4,8.88,0.56,CER,0.0,你叫什么名字？你来自哪里？你多大？你会说中文吗？你是做什么的？

@@ -22,7 +22,7 @@ log = logging.getLogger("asr.app")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # One model instance for the whole process, loaded once at startup.
-    app.state.asr = ASRService(num_threads=settings.torch_threads or None)
+    app.state.asr = ASRService(model_id=settings.model_id, num_threads=settings.torch_threads or None)
     app.state.load_error = None
     app.state.streams = {}   # stream_id -> StreamSession for every active stream
     # Limits simultaneous model inferences (see config).
