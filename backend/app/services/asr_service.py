@@ -62,7 +62,7 @@ class ASRService:
         return self.model is not None
 
     def transcribe(self, audio: np.ndarray, language: str | None = None,
-                   max_new_tokens: int = 256) -> TranscriptionResult:
+                   max_new_tokens: int = 512) -> TranscriptionResult:
         """Transcribe 16 kHz mono float32 samples. language: e.g. "English", "Chinese",
         "Indonesian", or None for automatic language detection."""
         if not self.loaded:

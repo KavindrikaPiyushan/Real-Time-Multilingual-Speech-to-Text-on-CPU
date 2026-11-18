@@ -19,6 +19,8 @@ from app.services.audio_service import AudioError, load_wav
 # (file, forced language name, reference file or None, error metric)
 SAMPLES = [
     ("english.wav", "English", "english.txt", "WER"),
+    ("mandarin.wav", "Chinese", "mandarin.txt", "CER"),
+    ("indonesian.wav", "Indonesian", "indonesian.txt", "WER"),
     ("mandarin_tts.wav", "Chinese", "mandarin_tts.txt", "CER"),
     ("indonesian_tts.wav", "Indonesian", "indonesian_tts.txt", "WER"),
 ]
