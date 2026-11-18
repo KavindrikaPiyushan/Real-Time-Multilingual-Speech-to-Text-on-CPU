@@ -17,18 +17,32 @@ class Sampler(threading.Thread):
 
     def __init__(self, pid: int, interval: float = 0.5):
         super().__init__(daemon=True)
-        self.proc, self.interval, self.stop_flag = psutil.Process(pid), interval, threading.Event()
-        self.samples: list[tuple[float, float, float, float]] = []   # (t, proc cpu, system cpu, rss MB)
+        # The venv's python.exe is only a launcher on Windows: the real server is a CHILD process,
+        # so we measure the whole process tree (cached Process objects keep cpu_percent consistent).
+        self.root, self.interval, self.stop_flag = psutil.Process(pid), interval, threading.Event()
+        self.known: dict[int, psutil.Process] = {}
+        self.samples: list[tuple[float, float, float, float]] = []   # (t, tree cpu, system cpu, tree RSS MB)
+
+    def _tree(self):
+        try:
+            procs = [self.root, *self.root.children(recursive=True)]
+        except psutil.Error:
+            return []
+        return [self.known.setdefault(p.pid, p) for p in procs]
 
     def run(self):
-        self.proc.cpu_percent(None)
+        for p in self._tree():
+            p.cpu_percent(None)
         psutil.cpu_percent(None)
         while not self.stop_flag.wait(self.interval):
-            try:
-                self.samples.append((time.perf_counter(), self.proc.cpu_percent(None),
-                                     psutil.cpu_percent(None), self.proc.memory_info().rss / 1e6))
-            except psutil.Error:
-                break
+            cpu = rss = 0.0
+            for p in self._tree():
+                try:
+                    cpu += p.cpu_percent(None)
+                    rss += p.memory_info().rss
+                except psutil.Error:
+                    pass
+            self.samples.append((time.perf_counter(), cpu, psutil.cpu_percent(None), rss / 1e6))
 
     def stop(self):
         self.stop_flag.set()
@@ -71,7 +85,8 @@ class Server:
         self.t_ready = time.perf_counter()
         return self
 
-    def idle_summary(self, seconds: float = 5.0) -> dict:
+    def idle_summary(self, seconds: float = 5.0, settle: float = 8.0) -> dict:
+        time.sleep(settle)          # let start-up work finish so we measure a truly idle server
         t = time.perf_counter()
         time.sleep(seconds)
         return self.sampler.summary(t, time.perf_counter())
