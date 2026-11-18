@@ -18,4 +18,7 @@ frontend/dist/
 # Models and caches (D:\hf_cache is outside the repo already)
 *.gguf
 *.safetensors
+
+
 docs/
+samples/

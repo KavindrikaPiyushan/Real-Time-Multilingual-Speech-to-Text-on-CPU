@@ -1,0 +1,7 @@
+﻿file,mode,detected_language,audio_s,infer_s,rtf,cpu_pct,rss_gb,metric,error_rate,transcript
+english.wav,auto-detect,English,11.1,8.44,0.76,553,3.63,WER,,The release Q and three is a family that includes two powerful all-in-one speech recognition models that support language identification.
+english.wav,forced,,11.1,6.12,0.55,583,3.64,WER,,The release Q and three is a family that includes two powerful all-in-one speech recognition models that support language identification.
+mandarin_tts.wav,auto-detect,Chinese,8.69,5.6,0.64,587,3.62,CER,0.0,你好，欢迎致电客户服务中心，请问您今天需要什么帮助？我想查询一下我的账户余额。
+mandarin_tts.wav,forced,,8.69,5.12,0.59,571,3.63,CER,0.0,你好，欢迎致电客户服务中心，请问您今天需要什么帮助？我想查询一下我的账户余额。
+indonesian_tts.wav,auto-detect,Indonesian,12.26,8.2,0.67,587,3.65,WER,0.0,selamat pagi terima kasih telah menghubungi layanan pelanggan ada yang bisa kami bantu hari ini saya ingin memeriksa saldo rekening saya
+indonesian_tts.wav,forced,,12.26,7.97,0.65,580,3.64,WER,0.0,selamat pagi terima kasih telah menghubungi layanan pelanggan ada yang bisa kami bantu hari ini saya ingin memeriksa saldo rekening saya
