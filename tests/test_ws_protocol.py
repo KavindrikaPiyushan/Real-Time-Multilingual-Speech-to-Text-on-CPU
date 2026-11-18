@@ -34,8 +34,8 @@ async def expect_error(name, messages, code):
         for m in messages:
             await ws.send(json.dumps(m) if isinstance(m, dict) else m)
         msg = None
-        while msg is None or msg.get("type") not in ("error", "done"):
-            msg = json.loads(await asyncio.wait_for(ws.recv(), 10))
+        while msg is None or msg.get("type") not in ("error", "final"):
+            msg = json.loads(await asyncio.wait_for(ws.recv(), 90))
     ok = msg.get("type") == "error" and msg.get("code") == code
     results.append((name, ok, msg))
 
@@ -53,15 +53,16 @@ async def main():
         await ws.send(json.dumps({"type": "end"}))
         msgs = []
         while True:
-            m = json.loads(await asyncio.wait_for(ws.recv(), 10))
+            m = json.loads(await asyncio.wait_for(ws.recv(), 90))
             msgs.append(m)
-            if m["type"] in ("done", "error"):
+            if m["type"] in ("final", "error"):
                 break
     status = [m for m in msgs if m["type"] == "status"]
     done = msgs[-1]
-    ok = (ready["type"] == "ready" and done["type"] == "done" and len(status) == 6
+    ok = (ready["type"] == "ready" and done["type"] == "final" and len(status) == 6
           and abs(done["audio_seconds"] - 11.1) < 0.05)
-    results.append(("happy path (6 chunks, 11.1 s)", ok, done))
+    ok = ok and "family" in done["text"]
+    results.append(("happy path (6 chunks, 11.1 s, transcript present)", ok, done))
 
     # a chunk split in the middle of a 16-bit sample must not corrupt the audio
     async with websockets.connect(URL) as ws:
@@ -69,10 +70,10 @@ async def main():
         await ws.send(pcm[:1001]); await ws.send(pcm[1001:5000])
         await ws.send(json.dumps({"type": "end"}))
         while True:
-            m = json.loads(await asyncio.wait_for(ws.recv(), 10))
-            if m["type"] in ("done", "error"):
+            m = json.loads(await asyncio.wait_for(ws.recv(), 90))
+            if m["type"] in ("final", "error"):
                 break
-    results.append(("odd-sized frames handled", m["type"] == "done" and abs(m["audio_seconds"] - 5000 / 2 / 16000) < 0.01, m))  # server rounds to 2 decimals
+    results.append(("odd-sized frames handled", m["type"] == "final" and abs(m["audio_seconds"] - 5000 / 2 / 16000) < 0.01, m))  # server rounds to 2 decimals
 
     await expect_error("wrong sample rate", [{**START, "sample_rate": 44100}], "bad_sample_rate")
     await expect_error("unsupported language", [{**START, "language": "French"}], "bad_language")
