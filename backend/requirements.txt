@@ -1,0 +1,25 @@
+# Backend dependencies (tested with Python 3.13 on Windows 11).
+# Install the CPU-only PyTorch first:
+#   pip install torch==2.15.0 --index-url https://download.pytorch.org/whl/cpu
+# then:
+#   pip install -r requirements.txt
+
+# Web / streaming
+fastapi==0.163.2
+uvicorn[standard]==0.54.0
+python-multipart==0.0.34
+websockets==17.4
+python-dotenv==1.2.4      # loads backend/.env (HF_HOME etc.)
+
+# Model and audio
+transformers==5.23.0      # Qwen3-ASR needs >= 5.13.0
+accelerate==1.16.0
+numpy==2.5.5
+soundfile==0.14.0
+soxr==1.1.0               # required by transformers' audio loading
+psutil==7.2.2
+
+# Tests and experiments only
+pytest==9.2.0
+httpx==0.28.1
+jiwer==4.0.0

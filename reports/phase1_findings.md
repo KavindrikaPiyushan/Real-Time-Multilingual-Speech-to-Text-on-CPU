@@ -43,7 +43,9 @@ Notes:
 - Qwen3-ASR-0.6B-hf **loads and transcribes on this CPU** with no GPU: Phase 1's first priority is met.
 - Single-stream speed (RTF about 0.53 with all 6 threads) is faster than real time, but it uses most of the CPU. Concurrency will likely be limited: each extra stream competes for the same cores. This must be tested in Phase 6, not assumed.
 - Memory per model instance is about 3.6-3.8 GB in float32. Multiple processes each holding a model would multiply this.
-- Decision: use Transformers on CPU with **application-level chunked streaming** (native streaming is vLLM-only; see the CPU-compat notes).
+- Decision: use Transformers on CPU with **application-level chunked streaming** (the Qwen3-ASR README says streaming is currently only available with the vLLM backend; see the CPU-compat notes).
+  vLLM's own docs list CPU backends (x86, ARM) but as Linux-only, with no Windows wheels or WSL instructions ([vLLM CPU installation](https://docs.vllm.ai/en/latest/getting_started/installation/cpu/)); the x86 backend recommends AVX-512 and marks AVX2 as limited features, and I did not check this CPU's flags.
+  The Qwen3-ASR README documents vLLM only with CUDA GPU setups and does not mention CPU or Windows. Whether Qwen3-ASR runs on vLLM's CPU backend is therefore undocumented, and I did not test it (WSL2 untested).
 
 ## 5. Next steps / ideas to test in Phase 2
 - Run on Mandarin and Bahasa Indonesia samples.
