@@ -4,11 +4,8 @@ A small end-to-end web application that behaves like **one live voice-call leg**
 small chunks at real-time speed over a WebSocket, the backend transcribes it with **Qwen3-ASR running on the CPU only**, and the transcript and latency figures
 appear in the page while the audio is still being sent. English, Mandarin Chinese and Bahasa Indonesia were tested.
 
-Built for the Tetherfi fresher technical assignment. Measured results, estimates and limitations are in [`reports/`](reports/) (start with the
-[technical report](reports/technical_report.md)). Architecture diagrams: [`architecture/architecture.png`](architecture/architecture.png) (current) and
-[`architecture/scaling.png`](architecture/scaling.png) (proposed scaling design).
-
-![Architecture](architecture/architecture.png)
+Measured results, estimates and limitations are in [`reports/`](reports/) (start with the
+[technical report](reports/technical_report.md)). 
 
 ## Technology choices
 | Part | Choice | Why |
@@ -117,10 +114,9 @@ frontend/src/           App.jsx, components/, hooks/useAudioStreaming.js, servic
 samples/                test audio and samples/references/ (reference transcripts)
 tests/                  tests, experiments and the load-test harness
 reports/                findings per phase, CSV data, technical_report.md, capacity_estimates.md
-architecture/           architecture.png / scaling.png (and .svg sources)
 ```
 
-## Results in one paragraph
+## Results 
 On an Intel i5-10500H (6 cores / 12 threads, 24 GB, CPU only), Qwen3-ASR-0.6B transcribed all three languages (English WER 0.35, Mandarin CER 0.00, Indonesian WER 0.44 on short own recordings).
 A single stream's first text appears after about 3 s and the final text about 6 s after the audio ends. Memory is about 3.8 GB, and CPU is the bottleneck (one inference uses about 6 cores):
 the machine handled 1 stream within my latency criteria with default settings and 2 with a 4 s update interval; more streams only queued up. See `reports/` for the data, and `reports/capacity_estimates.md`
@@ -128,9 +124,7 @@ for how these measurements were turned into (clearly labelled) estimates for 50-
 
 ## Known limitations
 - Application-level streaming, not native streaming: partial text can change, and on dense speech the transcript lags behind the audio (up to about 14 s on a 52 s Indonesian clip).
-- Low concurrency on a laptop CPU (see above); no GPU or optimisation work was done beyond the experiments in `reports/phase7_findings.md`.
-- Accuracy was measured on three short clips from one speaker, plus synthetic TTS clips (clean speech, not representative). Product names such as "Qwen3-ASR" were misrecognised.
+- Accuracy was measured on three short clips from one speaker, plus synthetic TTS clips (clean speech, not representative). Product names such as "Qwen3-ASR" were misrecognised in English clip testing.
 - Input must be 16 kHz mono 16-bit PCM WAV; there is no microphone input or live resampling.
 - Tested on Windows only. Capacity numbers for 50-1000 calls are estimates, not measurements.
 - The C++ runtime investigation measured whisper.cpp only; C++ builds of Qwen3-ASR itself were researched but not run.
-- No authentication or TLS: this is a prototype for a local demo.
