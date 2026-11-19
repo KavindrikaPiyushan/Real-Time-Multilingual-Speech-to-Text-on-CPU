@@ -14,15 +14,19 @@ const CHUNK_SIZES = [
 
 function Select({ label, value, onChange, options, disabled }) {
   return (
-    <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+    <label className="flex flex-col gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
       {label}
       <select
-        className="rounded-md border border-slate-300 bg-white px-3 py-2 font-normal disabled:bg-slate-100"
+        className="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-normal normal-case tracking-normal text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:[color-scheme:dark]"
         value={value}
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
       >
-        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        {options.map((o) => (
+          <option key={o.value} value={o.value} className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+            {o.label}
+          </option>
+        ))}
       </select>
     </label>
   )
@@ -30,7 +34,7 @@ function Select({ label, value, onChange, options, disabled }) {
 
 export default function LanguageSelector({ language, onLanguage, chunkMs, onChunkMs, disabled }) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <Select label="Language" value={language} onChange={onLanguage} options={LANGUAGES} disabled={disabled} />
       <Select
         label="Audio chunk size" value={chunkMs} onChange={(v) => onChunkMs(Number(v))}
