@@ -7,7 +7,6 @@ import sys
 import time
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""  # keep the GPU out of the benchmark
-os.environ.setdefault("HF_HOME", r"D:\hf_cache")  # keep the multi-GB model off C:
 
 import psutil
 import soundfile as sf

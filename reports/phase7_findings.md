@@ -38,12 +38,29 @@ Two repeats per cell (timings repeated within 1 s). Data: `whisper_cpp_results.c
 - The 7.2 GB RAM seen for int8 is an artefact of my script (quantized and original copies in one process), not the real int8 footprint.
 - In whisper.cpp, 5-bit quantization cut model size by about 60% (488 -> 190 MB) and RAM by about 30%, with no accuracy loss on these clips, but it was **not faster**
   (6.1 s vs 5.6 s English, 18.7 s vs 15.4 s Indonesian). Quantization saved memory and disk, not time, on this CPU. (Researched: another user's benchmark on old hardware also found 5-bit formats slower than 4-bit/8-bit.)
-- Not tested: GGUF-quantized Qwen3-ASR in a C++ runtime (see section 3).
+- GGUF-quantized Qwen3-ASR in a C++ runtime: now measured, see section 2b.
+
+## 2b. Qwen3-ASR-0.6B GGUF in transcribe.cpp (measured, offline whole-file, CPU backend only, 6 threads, language forced)
+transcribe.cpp v0.4.2 (`transcribe-cli`, built from source with MSVC; the prebuilt Windows release ships DLLs only), model `handy-computer/Qwen3-ASR-0.6B-gguf`, Q5_K_M (645 MB).
+Time = wall clock of a fresh process (includes model load, about 0.2 s because the weights are memory-mapped). Two repeats, within 0.4 s of each other.
+Data: `transcribe_cpp_results.csv`; script: `tests/transcribe_cpp_benchmark.py`.
+
+| Runtime | English 11 s: time, WER | Mandarin 16 s: time, CER | Indonesian 52 s: time, WER | Process RAM |
+|---|---|---|---|---|
+| Transformers float32 (baseline, from section 1) | 4.8-5.9 s, 0.353 | 4.9-6.9 s, 0.000 | 44-45 s, 0.442 | 3.6-3.8 GB |
+| **transcribe.cpp, Q5_K_M** | **3.0-3.2 s, 0.294** | **3.6-3.8 s, 0.000** | **17.6-18.0 s, 0.602** | **1.2-1.3 GB** |
+
+- **Speed and RAM:** about 1.5x faster on the short clips and about 2.5x faster on the 52 s clip, with about one third of the RAM, using the same model and the same 6 threads.
+  This is the runtime comparison that was missing: Transformers is **not** the fastest way to run Qwen3-ASR on this CPU. (The build reported "no BLAS found, scalar fallback", so there may be more headroom.)
+- **Accuracy:** English and Mandarin are equal or better; **Indonesian is worse (0.602 vs 0.442)**. I cannot tell whether that comes from the 5-bit quantization or from the runtime's
+  decoding; Q8_0 would separate the two but was not run (download too slow, about 0.5 MB/s; F16 skipped for the same reason). Three clips from one speaker, so indicative only.
+- **Streaming:** not tested. The CLI is an offline decoder, so the same application-level chunking would still be needed.
+- **Still untested:** CrispASR, the official `qwen-asr` package on CPU, and vLLM under WSL2.
 
 ## 3. Other CPU options (researched, not run)
 | Option | What it is | Why it might help | Risk / unknown |
 |---|---|---|---|
-| Qwen3-ASR in C++ (CrispASR, transcribe.cpp, RapidSpeech.cpp; GGUF quantized) | ggml-based runtimes that load Qwen3-ASR | Keeps the required model, matches the "C++ preferred" note, smaller RAM; one report claims faster than real time on a 4-core Xeon | Self-reported numbers, young projects; streaming support and Windows builds not verified by me |
+| Qwen3-ASR in C++ (transcribe.cpp **measured**, see 2b; CrispASR, RapidSpeech.cpp not run) | ggml-based runtimes that load Qwen3-ASR | Keeps the required model, matches the "C++ preferred" note; measured 1.5-2.5x faster and 1/3 the RAM of Transformers | Indonesian WER worse with Q5_K_M (0.602 vs 0.442), cause not isolated; streaming not tested; had to build from source on Windows |
 | vLLM backend (official Qwen3-ASR streaming) | native incremental streaming | Removes the repeated re-transcription that costs this design about 2.5x extra compute | No native Windows; CPU support for Qwen3-ASR not confirmed (WSL2 untested) |
 | faster-whisper (CTranslate2, int8) | Python wrapper with optimised int8 CPU kernels | Often faster than whisper.cpp on x86 CPUs | Not tested here |
 | sherpa-onnx streaming models | true streaming recognisers (ONNX) | Designed for low-latency CPU streaming, very low compute | Language coverage (Indonesian in particular) and accuracy unverified |
@@ -63,5 +80,5 @@ Ordered by expected effect (estimates, not measured unless stated):
 6. **Separate the layers:** stateless WebSocket gateways that buffer and forward audio, and a pool of ASR workers behind a queue, so the model tier can be scaled independently.
 
 ## 5. What I would test next
-Qwen3-ASR GGUF in a C++ runtime (speed, RAM, accuracy, streaming); faster-whisper int8; a VAD in front of the model; the whisper-turbo long-audio failure with different settings;
+Qwen3-ASR GGUF Q8_0 in transcribe.cpp (to isolate the Indonesian accuracy drop) and its streaming behaviour; CrispASR; faster-whisper int8; a VAD in front of the model; the whisper-turbo long-audio failure with different settings;
 a larger and more varied test set (several speakers, noisy phone audio) before drawing accuracy conclusions.

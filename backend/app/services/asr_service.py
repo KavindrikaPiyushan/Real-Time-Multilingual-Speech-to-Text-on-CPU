@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 # Keep the GPU out of the benchmark. Must be set before torch initialises CUDA.
 os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
-os.environ.setdefault("HF_HOME", r"D:\hf_cache")
+# The model is cached by Hugging Face (default: ~/.cache/huggingface). Set HF_HOME to move it, e.g. to another drive.
 
 import numpy as np
 import torch
